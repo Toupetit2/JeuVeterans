@@ -12,10 +12,12 @@ export default function Board({ grid, onCellClick, onCellRightClick }) {
         <Cell
           key={i}
           value={cell.display} // " " | "F" | "1" | "💣"
+          revealed={cell.revealed}
           onClick={() => onCellClick(i)}
           onRightClick={() => onCellRightClick(i)}
         />
       ))}
     </div>
+    
   );
 }

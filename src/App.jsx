@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import Board from './components/Board';
+import EndGameUI from './components/EndGameUI';
 
 export default function App() {
   const size = 9;
+  const mineNumber = 10;
   const [grid, setGrid] = useState(generateEmptyGrid(size));
+  const [status, setStatus] = useState("playing"); // "won", "lost", "playing"
+  const [revealedCount, setRevealedCount] = useState(0);
+
 
   useEffect(() => {
     setGrid(generateMines(size, grid));
@@ -21,10 +26,12 @@ export default function App() {
       );
   }
 
+  
+
   function generateMines(size, baseGrid) {
     const newGrid = baseGrid.map(row => row.map(cell => ({ ...cell })));
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < mineNumber; i++) {
       const randomPos = Math.floor(Math.random() * size * size);
       const x = Math.floor(randomPos / size);
       const y = randomPos % size;
@@ -62,9 +69,10 @@ export default function App() {
     ) return newGrid;
 
     newGrid[x][y].revealed = true;
+    setRevealedCount(prev => prev + 1);
 
     const minesCount = countMinesAround(x, y, newGrid);
-    newGrid[x][y].display = minesCount > 0 ? minesCount.toString() : '🔴';
+    newGrid[x][y].display = minesCount > 0 ? minesCount.toString() : '';
 
     if (minesCount === 0) {
       for (let i = -1; i <= 1; i++) {
@@ -80,14 +88,21 @@ export default function App() {
   };
 
   const handleCellClick = (i) => {
+    console.log(status)
     const x = Math.floor(i / size);
     const y = i % size;
 
     const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
 
+    if (newGrid[x][y].hasMine)
+      { setStatus("lost"); }
+
     if (!newGrid[x][y].revealed) {
       const updatedGrid = revealCase(x, y, newGrid);
       setGrid(updatedGrid);
+      console.log(revealedCount);
+      if (revealedCount == (size*size)-mineNumber-1)
+        { setStatus("won"); }
     }
   };
 
@@ -105,6 +120,7 @@ export default function App() {
   return (
     <div className="p-4 min-h-screen bg-gray-100 flex items-center justify-center">
       <Board grid={grid} onCellClick={handleCellClick} onCellRightClick={handleCellRightClick} />
+      <EndGameUI status={status}></EndGameUI>
     </div>
   );
 }
