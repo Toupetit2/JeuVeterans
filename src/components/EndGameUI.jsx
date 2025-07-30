@@ -8,7 +8,7 @@ export default function EndGameUI({ status }) {
           {status === 'won' ? '🎉 Tu as gagné !' : '💥 Tu as perdu.'}
         </h2>
         <button
-          //onClick={window.location.reload(false)}
+          onClick={() => window.location.reload()}
           className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
           Rejouer

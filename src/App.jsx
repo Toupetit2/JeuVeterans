@@ -30,13 +30,20 @@ export default function App() {
 
   function generateMines(size, baseGrid) {
     const newGrid = baseGrid.map(row => row.map(cell => ({ ...cell })));
-
+    
+    let randomPos = Math.floor(Math.random() * size * size);
+    let x = Math.floor(randomPos / size);
+    let y = randomPos % size;
+    
     for (let i = 0; i < mineNumber; i++) {
-      const randomPos = Math.floor(Math.random() * size * size);
-      const x = Math.floor(randomPos / size);
-      const y = randomPos % size;
+      
+      while (newGrid[x][y].hasMine === true){
+        
+        randomPos = Math.floor(Math.random() * size * size);
+        x = Math.floor(randomPos / size);
+        y = randomPos % size;
+      }
 
-      newGrid[x][y].display = '💣';
       newGrid[x][y].hasMine = true;
     }
 
