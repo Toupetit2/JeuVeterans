@@ -6,12 +6,12 @@ export default function Board({ grid, onCellClick, onCellRightClick }) {
   return (
     <div
       className={`grid grid-cols-${size} gap-1 max-w-screen-sm w-full mx-auto`}
-      style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }} // nécessaire pour le dynamic
+      style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}
     >
       {grid.flat().map((cell, i) => (
         <Cell
           key={i}
-          value={cell.display} // " " | "F" | "1" | "💣"
+          value={cell.display}
           revealed={cell.revealed}
           onClick={() => onCellClick(i)}
           onRightClick={() => onCellRightClick(i)}
