@@ -6,7 +6,13 @@ export default function Board({ grid, onCellClick, onCellRightClick }) {
   return (
     <div
       className={`grid grid-cols-${size} gap-1 max-w-screen-sm w-full mx-auto`}
-      style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}
+      style={{ 
+        gridTemplateColumns: `repeat(${size}, 1fr)`,
+        backgroundImage: "url('idden-bg.webp')",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center"
+    }}
     >
       {grid.flat().map((cell, i) => (
         <Cell

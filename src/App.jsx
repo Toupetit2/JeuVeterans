@@ -125,7 +125,7 @@ export default function App() {
   };
 
   return (
-    <div className="p-4 min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="p-4 min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
       <Board grid={grid} onCellClick={handleCellClick} onCellRightClick={handleCellRightClick} />
       <EndGameUI status={status}></EndGameUI>
     </div>
