@@ -21,6 +21,8 @@ export default function Board({ grid, onCellClick, onCellRightClick }) {
           revealed={cell.revealed}
           onClick={() => onCellClick(i)}
           onRightClick={() => onCellRightClick(i)}
+          visible={cell.visible}
+          flag={cell.flag}
         />
       ))}
     </div>

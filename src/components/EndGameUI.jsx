@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
-export default function EndGameUI({ status }) {
-  const [visible, setVisible] = useState(true);
+export default function EndGameUI({ status, visible }) {
+  const [visibleB, setVisibleB] = useState(true);
 
-  if (status === 'playing' || !visible) return null;
+  if (status === 'playing' || !visibleB || !visible) return null;
 
   return (
     <div className="fixed inset-0 bg-transparent backdrop-blur-xs flex items-center justify-center z-50 text-gray-900 dark:text-gray-100">
       <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg text-center max-w-sm w-full">
         <button
-          onClick={() => setVisible(false)}
+          onClick={() => setVisibleB(false)}
           className="relative bottom-2 left-40 text-gray-500 hover:text-gray-800 dark:hover:text-gray-300 text-2xl font-bold leading-none"
           aria-label="Fermer"
         >

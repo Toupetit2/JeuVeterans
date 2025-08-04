@@ -8,6 +8,7 @@ export default function App() {
   const [grid, setGrid] = useState(generateEmptyGrid(size));
   const [status, setStatus] = useState("playing"); // "won", "lost", "playing"
   const [revealedCount, setRevealedCount] = useState(0);
+  const [showEndMenu, setShowEndMenu] = useState(true);
 
 
   useEffect(() => {
@@ -21,12 +22,43 @@ export default function App() {
         Array(size).fill({
           display: '',
           revealed: false,
+          visible: true,
           hasMine: false,
         })
       );
   }
-
   
+  useEffect(() => {
+  if (status === 'won') {
+    animateVictory();
+  }
+}, [status]);
+
+  const animateVictory = async () => {
+    setShowEndMenu(false);
+
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    // Deep copy correcte du grid
+    const copyGrid = grid.map(row => row.map(cell => ({ ...cell })));
+
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        copyGrid[row][col].visible = false;
+        copyGrid[row][col].revealed = true;
+      }
+
+      // On clone à chaque ligne pour déclencher le rendu
+      const newGrid = copyGrid.map(r => r.map(c => ({ ...c })));
+      setGrid(newGrid);
+      await delay(800);
+    }
+
+
+
+    setShowEndMenu(true);
+  };
+
 
   function generateMines(size, baseGrid) {
     const newGrid = baseGrid.map(row => row.map(cell => ({ ...cell })));
@@ -118,8 +150,9 @@ export default function App() {
     const y = i % size;
 
     const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
-
-    newGrid[x][y].display = newGrid[x][y].display === '🚩' ? '' : '🚩';
+    if (!newGrid[x][y].revealed){
+      newGrid[x][y].flag = newGrid[x][y].flag === true ? false : true;
+    }
 
     setGrid(newGrid);
   };
@@ -127,7 +160,7 @@ export default function App() {
   return (
     <div className="p-4 min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
       <Board grid={grid} onCellClick={handleCellClick} onCellRightClick={handleCellRightClick} />
-      <EndGameUI status={status}></EndGameUI>
+      <EndGameUI status={status} visible={showEndMenu}></EndGameUI>
     </div>
   );
 }
