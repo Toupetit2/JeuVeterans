@@ -14,9 +14,9 @@ export default function Cell({ value, revealed, onClick, onRightClick, visible, 
         text-gray-900 dark:text-gray-100
         ${visible ? '' : 'invisible'}
         ${isEmpty 
-          ? 'bg-white dark:bg-gray-900/80' 
+          ? 'bg-white/80 dark:bg-gray-900/80' 
           : revealed 
-            ? 'bg-white dark:bg-gray-900/95' 
+            ? 'bg-white/95 dark:bg-gray-900/95' 
             : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'}
         
       `}
