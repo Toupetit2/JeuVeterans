@@ -8,7 +8,7 @@ export default function Board({ grid, onCellClick, onCellRightClick }) {
       className={`grid grid-cols-${size} gap-1 max-w-screen-sm w-full mx-auto`}
       style={{ 
         gridTemplateColumns: `repeat(${size}, 1fr)`,
-        backgroundImage: "url('idden-bg.webp')",
+        backgroundImage: "url('Veterans_de_France_Affiche.png')",
         backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center"

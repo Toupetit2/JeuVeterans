@@ -6,41 +6,61 @@ import Header from './components/Header';
 export default function App() {
   const size = 9;
   const mineNumber = 10;
-  const [grid, setGrid] = useState(generateEmptyGrid(size));
+  const [grid, setGrid] = useState([]);
   const [status, setStatus] = useState("playing"); // "won", "lost", "playing"
   const [revealedCount, setRevealedCount] = useState(0);
   const [showEndMenu, setShowEndMenu] = useState(true);
 
+  // --- Génère une grille vide (chaque cellule indépendante)
+  function generateEmptyGrid(size) {
+    return Array.from({ length: size }, () =>
+      Array.from({ length: size }, () => ({
+        display: '',
+        revealed: false,
+        visible: true,
+        hasMine: false,
+        flag: false,
+      }))
+    );
+  }
 
+  // --- Place les mines aléatoirement
+  function generateMines(size, baseGrid) {
+    const newGrid = baseGrid.map(row => row.map(cell => ({ ...cell })));
+    let placed = 0;
+
+    while (placed < mineNumber) {
+      const randomPos = Math.floor(Math.random() * size * size);
+      const x = Math.floor(randomPos / size);
+      const y = randomPos % size;
+
+      if (!newGrid[x][y].hasMine) {
+        newGrid[x][y].hasMine = true;
+        placed++;
+      }
+    }
+
+    return newGrid;
+  }
+
+  // --- Initialisation du jeu
   useEffect(() => {
-    setGrid(generateMines(size, grid));
+    const empty = generateEmptyGrid(size);
+    const withMines = generateMines(size, empty);
+    setGrid(withMines);
   }, []);
 
-  function generateEmptyGrid(size) {
-    return Array(size)
-      .fill(null)
-      .map(() =>
-        Array(size).fill({
-          display: '',
-          revealed: false,
-          visible: true,
-          hasMine: false,
-        })
-      );
-  }
-  
+  // --- Animation de victoire
   useEffect(() => {
-  if (status === 'won') {
-    animateVictory();
-  }
-}, [status]);
+    if (status === 'won') {
+      animateVictory();
+    }
+  }, [status]);
 
   const animateVictory = async () => {
     setShowEndMenu(false);
-
     const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-    // Deep copy correcte du grid
     const copyGrid = grid.map(row => row.map(cell => ({ ...cell })));
 
     for (let row = 0; row < size; row++) {
@@ -48,41 +68,15 @@ export default function App() {
         copyGrid[row][col].visible = false;
         copyGrid[row][col].revealed = true;
       }
-
-      // On clone à chaque ligne pour déclencher le rendu
       const newGrid = copyGrid.map(r => r.map(c => ({ ...c })));
       setGrid(newGrid);
       await delay(800);
     }
 
-
-
     setShowEndMenu(true);
   };
 
-
-  function generateMines(size, baseGrid) {
-    const newGrid = baseGrid.map(row => row.map(cell => ({ ...cell })));
-    
-    let randomPos = Math.floor(Math.random() * size * size);
-    let x = Math.floor(randomPos / size);
-    let y = randomPos % size;
-    
-    for (let i = 0; i < mineNumber; i++) {
-      
-      while (newGrid[x][y].hasMine === true){
-        
-        randomPos = Math.floor(Math.random() * size * size);
-        x = Math.floor(randomPos / size);
-        y = randomPos % size;
-      }
-
-      newGrid[x][y].hasMine = true;
-    }
-
-    return newGrid;
-  }
-
+  // --- Compte les mines autour d'une cellule
   function countMinesAround(x, y, grid) {
     let count = 0;
     for (let i = -1; i <= 1; i++) {
@@ -101,6 +95,7 @@ export default function App() {
     return count;
   }
 
+  // --- Révèle une cellule (et les cases vides adjacentes)
   const revealCase = (x, y, newGrid) => {
     if (
       x < 0 || x >= size ||
@@ -127,42 +122,55 @@ export default function App() {
     return newGrid;
   };
 
+  // --- Clique gauche
   const handleCellClick = (i) => {
-    console.log(status)
+    if (status !== "playing") return;
+
     const x = Math.floor(i / size);
     const y = i % size;
-
     const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
 
-    if (newGrid[x][y].hasMine)
-      { setStatus("lost"); }
+    if (newGrid[x][y].hasMine) {
+      setStatus("lost");
+      return;
+    }
 
     if (!newGrid[x][y].revealed) {
       const updatedGrid = revealCase(x, y, newGrid);
       setGrid(updatedGrid);
-      console.log(revealedCount);
-      if (revealedCount == (size*size)-mineNumber-1)
-        { setStatus("won"); }
     }
   };
 
+  // --- Clique droit (drapeau)
   const handleCellRightClick = (i) => {
+    if (status !== "playing") return;
+
     const x = Math.floor(i / size);
     const y = i % size;
 
     const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
-    if (!newGrid[x][y].revealed){
-      newGrid[x][y].flag = newGrid[x][y].flag === true ? false : true;
+    if (!newGrid[x][y].revealed) {
+      newGrid[x][y].flag = !newGrid[x][y].flag;
+      setGrid(newGrid);
     }
-
-    setGrid(newGrid);
   };
+
+  // --- Vérifie la victoire à chaque mise à jour du nombre de cases révélées
+  useEffect(() => {
+    if (grid.length > 0 && revealedCount === size * size - mineNumber) {
+      setStatus("won");
+    }
+  }, [revealedCount, grid]);
 
   return (
     <div className="p-4 min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
       <Header />
-      <Board grid={grid} onCellClick={handleCellClick} onCellRightClick={handleCellRightClick} />
-      <EndGameUI status={status} visible={showEndMenu}></EndGameUI>
+      <Board
+        grid={grid}
+        onCellClick={handleCellClick}
+        onCellRightClick={handleCellRightClick}
+      />
+      <EndGameUI status={status} visible={showEndMenu} />
     </div>
   );
 }
