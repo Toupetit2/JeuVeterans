@@ -9,12 +9,12 @@ export default function Header() {
 
         {/* Logo centré */}
         <img
-          src="public/logoVeteransDarkMode.png"
+          src="logoVeteransDarkMode.png"
           alt="Logo dark"
           className="h-full w-100 object-contain mx-auto hidden dark:block"
         />
         <img
-          src="public/logoVeteransLightMode.png"
+          src="logoVeteransLightMode.png"
           alt="Logo light"
           className="h-full w-100 object-contain mx-auto dark:hidden"
         />
