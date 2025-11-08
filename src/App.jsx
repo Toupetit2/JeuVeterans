@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Board from './components/Board';
 import EndGameUI from './components/EndGameUI';
 import Header from './components/Header';
+import Timer from "./components/timer";
 
 export default function App() {
   const size = 9;
@@ -163,14 +164,16 @@ export default function App() {
   }, [revealedCount, grid]);
 
   return (
-    <div className="p-4 min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+    <div className="p-4 min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-col">
       <Header />
+      <Timer running={status==="playing"}/>
       <Board
         grid={grid}
         onCellClick={handleCellClick}
         onCellRightClick={handleCellRightClick}
       />
       <EndGameUI status={status} visible={showEndMenu} />
+      
     </div>
   );
 }
